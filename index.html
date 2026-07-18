@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSM | Makers of Quality Sewing Thread</title>
+    
+    <!-- Multi-Professional Typography Suite -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-cream: #f4efe6;
+            --bg-warm-light: #faf7f2;
+            --text-dark: #16202c;
+            --text-muted: #475569;
+            --thread-coral: #c84b31;
+            --vibrant-ruby: #e11d48;
+            --vibrant-sapphire: #1d4ed8;
+            --vibrant-emerald: #047857;
+            --vibrant-amber: #b45309;
+            --card-glass: rgba(255, 255, 255, 0.88);
+            --border-subtle: rgba(22, 32, 44, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-cream);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            line-height: 1.65;
+        }
+
+        /* --- INTRO ANIMATION LOADER --- */
+        #intro-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: var(--bg-cream);
+            z-index: 99999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
+        }
+
+        .loader-content {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .draw-thread {
+            stroke-dasharray: 800;
+            stroke-dashoffset: 800;
+            animation: drawLine 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .fade-needle {
+            opacity: 0;
+            transform: translate(-15px, -15px);
+            animation: dropIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards;
+        }
+
+        .fade-text {
+            opacity: 0;
+            animation: fadeIn 0.8s ease 1.3s forwards;
+        }
+
+        .fade-tagline {
+            opacity: 0;
+            animation: fadeIn 0.8s ease 1.6s forwards;
+        }
+
+        .loader-bar-wrap {
+            width: 160px;
+            height: 2px;
+            background: rgba(22, 32, 44, 0.1);
+            margin-top: 1.5rem;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .loader-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--thread-coral), var(--vibrant-amber));
+            animation: loadProgress 2.4s ease-in-out forwards;
+        }
+
+        /* --- CINEMATIC BACKGROUND CANVAS --- */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.55;
+        }
+
+        /* --- STICKY GLASS NAVIGATION --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.25rem 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(244, 239, 230, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-subtle);
+            transition: all 0.3s ease;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 0.88rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            position: relative;
+            padding-bottom: 4px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--thread-coral), var(--vibrant-amber));
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-btn {
+            background: var(--text-dark);
+            color: #fff !important;
+            padding: 0.6rem 1.4rem;
+            border-radius: 50px;
+            transition: all 0.3s ease !important;
+        }
+
+        .nav-btn::after { display: none !important; }
+        .nav-btn:hover {
+            background: var(--thread-coral);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(200, 75, 49, 0.25);
+        }
+
+        /* --- SCENE 1: THE PROLOGUE (HERO WITH EXACT LOGO) --- */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 8.5rem 2rem 5rem;
+            position: relative;
+        }
+
+        .logo-frame {
+            background: var(--bg-cream);
+            padding: 2.5rem 3.5rem;
+            border-radius: 28px;
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.1), 
+                        0 0 0 1px rgba(22, 32, 44, 0.05);
+            margin-bottom: 2.5rem;
+            transform: translateY(30px);
+            opacity: 0;
+            animation: sceneFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 2.6s forwards;
+            position: relative;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.4rem, 5.5vw, 4.5rem);
+            font-weight: 800;
+            line-height: 1.12;
+            max-width: 950px;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+            opacity: 0;
+            animation: sceneFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 2.8s forwards;
+        }
+
+        .hero-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1.3rem, 2.5vw, 1.65rem);
+            font-weight: 400;
+            font-style: italic;
+            color: var(--text-muted);
+            max-width: 780px;
+            margin-bottom: 2.5rem;
+            opacity: 0;
+            animation: sceneFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 3s forwards;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            opacity: 0;
+            animation: sceneFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 3.2s forwards;
+        }
+
+        .btn-primary {
+            padding: 1.1rem 2.8rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #fff;
+            background: linear-gradient(135deg, var(--text-dark) 0%, #2d3748 100%);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 12px 30px rgba(22, 32, 44, 0.25);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            text-decoration: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            background: linear-gradient(135deg, var(--thread-coral) 0%, #9f3820 100%);
+            box-shadow: 0 18px 38px rgba(200, 75, 49, 0.4);
+        }
+
+        .btn-secondary {
+            padding: 1.1rem 2.8rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dark);
+            background: transparent;
+            border: 2px solid var(--text-dark);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            text-decoration: none;
+        }
+
+        .btn-secondary:hover {
+            background: var(--text-dark);
+            color: #fff;
+            transform: translateY(-4px);
+        }
+
+        /* --- COMMON SECTION STYLING --- */
+        .section-padding {
+            padding: 7.5rem 8%;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 4.5rem;
+        }
+
+        .section-tag {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3.5px;
+            color: var(--thread-coral);
+            margin-bottom: 0.8rem;
+            display: inline-block;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.2rem, 4vw, 3.4rem);
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            color: var(--text-dark);
+        }
+
+        .section-desc {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* --- SCENE 2: THE SPECTRUM OF COLOR --- */
+        .spectrum-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .spectrum-card {
+            background: var(--card-glass);
+            border-radius: 24px;
+            padding: 3rem 2.2rem;
+            text-align: left;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+            border: 1px solid rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .spectrum-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+        }
+
+        .card-ruby::before { background: var(--vibrant-ruby); }
+        .card-amber::before { background: var(--vibrant-amber); }
+        .card-sapphire::before { background: var(--vibrant-sapphire); }
+
+        .spectrum-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+        }
+
+        .card-number {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .num-ruby { color: var(--vibrant-ruby); }
+        .num-amber { color: var(--vibrant-amber); }
+        .num-sapphire { color: var(--vibrant-sapphire); }
+
+        .spectrum-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+        }
+
+        .spectrum-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* --- SCENE 3: THE PRODUCT CATALOG (SPUN POLYESTER LINEUP) --- */
+        .catalog-section {
+            background: var(--bg-warm-light);
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            border: 1px solid rgba(22, 32, 44, 0.06);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.08);
+            border-color: var(--thread-coral);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-cream);
+            color: var(--text-dark);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .count-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .count-subtitle {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--thread-coral);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1.5rem;
+        }
+
+        .product-specs {
+            list-style: none;
+            margin-bottom: 2rem;
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 1.2rem;
+        }
+
+        .product-specs li {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .product-specs li::before {
+            content: '▪';
+            color: var(--thread-coral);
+            font-size: 1.2rem;
+        }
+
+        .product-card-footer {
+            padding-top: 1.2rem;
+            border-top: 1px solid rgba(0,0,0,0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .select-link {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s;
+        }
+
+        .product-card:hover .select-link { color: var(--thread-coral); }
+
+        /* --- SCENE 4: VERTICAL SETUP & MACHINERY --- */
+        .machinery-container {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 4.5rem;
+            align-items: center;
+        }
+
+        @media (max-width: 960px) {
+            .machinery-container { grid-template-columns: 1fr; }
+        }
+
+        .machinery-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .machinery-box {
+            background: var(--card-glass);
+            padding: 2rem;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.9);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+        }
+
+        .machinery-box h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .machinery-box p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Animated Schematic Display */
+        .schematic-display {
+            background: #111827;
+            border-radius: 24px;
+            padding: 3rem 2rem;
+            color: #fff;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .schematic-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            letter-spacing: 3px;
+            color: #9ca3af;
+            margin-bottom: 2.5rem;
+            text-transform: uppercase;
+        }
+
+        .cones-animation {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            height: 220px;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .animated-cone {
+            width: 55px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.03) 100%);
+            border-radius: 6px 6px 3px 3px;
+            position: relative;
+            animation: pulseCone 3.5s infinite alternate ease-in-out;
+        }
+
+        .cone-1 { height: 130px; border-bottom: 5px solid var(--vibrant-ruby); animation-delay: 0s; }
+        .cone-2 { height: 170px; border-bottom: 5px solid var(--vibrant-amber); animation-delay: 0.6s; }
+        .cone-3 { height: 145px; border-bottom: 5px solid var(--vibrant-sapphire); animation-delay: 1.2s; }
+        .cone-4 { height: 160px; border-bottom: 5px solid var(--vibrant-emerald); animation-delay: 1.8s; }
+
+        .cone-thread-wrap {
+            width: 100%;
+            height: 85%;
+            border-radius: 3px;
+            background-size: 100% 6px;
+            position: relative;
+        }
+
+        .cone-1 .cone-thread-wrap { background: repeating-linear-gradient(45deg, #be123c, #f43f5e 3px, #e11d48 6px); }
+        .cone-2 .cone-thread-wrap { background: repeating-linear-gradient(45deg, #92400e, #fbbf24 3px, #d97706 6px); }
+        .cone-3 .cone-thread-wrap { background: repeating-linear-gradient(45deg, #1e40af, #60a5fa 3px, #2563eb 6px); }
+        .cone-4 .cone-thread-wrap { background: repeating-linear-gradient(45deg, #065f46, #34d399 3px, #059669 6px); }
+
+        /* --- SCENE 5: CERTIFICATION & LOCATION --- */
+        .cert-location-section {
+            background: #fff;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        @media (max-width: 850px) {
+            .grid-2col { grid-template-columns: 1fr; gap: 2.5rem; }
+        }
+
+        .cert-box, .location-box {
+            padding: 3.5rem;
+            border-radius: 24px;
+            background: var(--bg-cream);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+
+        .cert-badge {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #047857;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 25px rgba(4, 120, 87, 0.25);
+        }
+
+        .box-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        /* --- SCENE 6: THE EPILOGUE & ORDER SUITE --- */
+        footer {
+            background: var(--text-dark);
+            color: #fff;
+            padding: 7rem 8% 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--vibrant-ruby), var(--vibrant-amber), var(--vibrant-emerald), var(--vibrant-sapphire));
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            margin-bottom: 5rem;
+        }
+
+        @media (max-width: 960px) {
+            .footer-grid { grid-template-columns: 1fr; gap: 3.5rem; }
+        }
+
+        .contact-info h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.6rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .contact-info p {
+            color: #94a3b8;
+            font-size: 1.05rem;
+            margin-bottom: 2.5rem;
+            max-width: 480px;
+        }
+
+        .contact-hotline {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            border-left: 4px solid var(--thread-coral);
+        }
+
+        .hotline-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #94a3b8;
+        }
+
+        .hotline-number {
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        /* Interactive Order Form directly to Hotmail */
+        .order-form-card {
+            background: #fff;
+            color: var(--text-dark);
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        }
+
+        .order-form-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .order-form-card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.4rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.95rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--thread-coral);
+            box-shadow: 0 0 0 3px rgba(200, 75, 49, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1.1rem;
+            background: var(--text-dark);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        .btn-submit:hover {
+            background: var(--thread-coral);
+            box-shadow: 0 10px 25px rgba(200, 75, 49, 0.3);
+        }
+
+        .copyright-bar {
+            padding-top: 3rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        /* --- KEYFRAME ANIMATIONS & REVEALS --- */
+        @keyframes drawLine {
+            to { stroke-dashoffset: 0; }
+        }
+
+        @keyframes dropIn {
+            to { opacity: 1; transform: translate(0, 0); }
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        @keyframes loadProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes sceneFadeIn {
+            from { opacity: 0; transform: translateY(35px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulseCone {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-10px); }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CINEMATIC OPENING ANIMATION LOADER -->
+    <div id="intro-loader">
+        <div class="loader-content">
+            <svg width="240" height="240" viewBox="0 0 350 350" xmlns="http://www.w3.org/2000/svg">
+                <!-- Red Thread Path (Animated Draw) -->
+                <path class="draw-thread" d="M126 128 C140 95, 175 135, 215 168 C255 200, 295 115, 260 65 C230 15, 175 115, 230 178" 
+                      fill="none" stroke="#c84b31" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Needle (Fade & Drop in) -->
+                <g class="fade-needle">
+                    <path d="M120 120 L168 208 L162 211 L114 123 Z" fill="#16202c"/>
+                    <polygon points="168,208 162,211 176,228" fill="#16202c"/>
+                    <path d="M114 123 L120 120 L112 105 L105 109 Z" fill="#16202c"/>
+                    <ellipse cx="113" cy="114" rx="2" ry="5.5" fill="#f4efe6" transform="rotate(-28 113 114)"/>
+                </g>
+                <!-- Script Text (Fade in) -->
+                <text class="fade-text" x="175" y="258" font-family="'Alex Brush', cursive" font-size="96" fill="#16202c" text-anchor="middle">HSM</text>
+                <!-- Tagline (Fade in later) -->
+                <text class="fade-tagline" x="175" y="296" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="14" fill="#16202c" text-anchor="middle" letter-spacing="3.8">Makers of quality sewing thread</text>
+            </svg>
+            <div class="loader-bar-wrap">
+                <div class="loader-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Animated Cinematic Background Canvas -->
+    <div id="canvas-container">
+        <canvas id="threadCanvas"></canvas>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="#" class="nav-brand">
+            <!-- Navbar Mini Emblem -->
+            <svg width="42" height="42" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <rect width="200" height="200" fill="#f4efe6" rx="28"/>
+                <path d="M75 55 C90 35, 120 70, 145 95 C170 120, 190 70, 165 40 C140 10, 105 75, 130 105" fill="none" stroke="#c84b31" stroke-width="4.5" stroke-linecap="round"/>
+                <path d="M55 45 L95 135 L89 137 L48 48 Z" fill="#16202c"/>
+                <polygon points="48,48 55,45 42,35" fill="#16202c"/>
+                <ellipse cx="49" cy="42" rx="1.8" ry="4" fill="#f4efe6" transform="rotate(-25 49 42)"/>
+                <text x="100" y="162" font-family="'Alex Brush', cursive" font-size="58" fill="#16202c" text-anchor="middle">HSM</text>
+            </svg>
+            <span style="font-family: 'Cinzel', serif; font-weight: 700; letter-spacing: 2.5px; font-size: 1.25rem;">HSM</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#about">Our Craft</a></li>
+            <li><a href="#catalog">Product Lineup</a></li>
+            <li><a href="#setup">Vertical Setup</a></li>
+            <li><a href="#certification">Oeko-Tex</a></li>
+            <li><a href="#order" class="nav-btn">Request Order</a></li>
+        </ul>
+    </nav>
+
+    <!-- SCENE 1: THE PROLOGUE (HERO WITH EXACT RE-ENGINEERED LOGO) -->
+    <section class="hero">
+        <div class="logo-frame">
+            <!-- HIGH-PRECISION LOGO RECREATION -->
+            <svg width="340" height="340" viewBox="0 0 350 350" xmlns="http://www.w3.org/2000/svg">
+                <!-- Soft Cream Background -->
+                <rect width="350" height="350" fill="#f4efe6" rx="24"/>
+                
+                <!-- Delicate Looping Thread (Crimson/Coral) -->
+                <path d="M126 128 C140 95, 175 135, 215 168 C255 200, 295 115, 260 65 C230 15, 175 115, 230 178" 
+                      fill="none" stroke="#c84b31" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+                
+                <!-- Re-Engineered Tilted Calligraphic Sewing Needle (Dark Navy/Charcoal) -->
+                <g transform="translate(0, 0)">
+                    <!-- Needle Shaft/Blade pointing sharply toward the letters HSM -->
+                    <path d="M120 120 L168 208 L162 211 L114 123 Z" fill="#16202c"/>
+                    <!-- Sharp Needle Point -->
+                    <polygon points="168,208 162,211 176,228" fill="#16202c"/>
+                    <!-- Needle Head / Eye Section -->
+                    <path d="M114 123 L120 120 L112 105 L105 109 Z" fill="#16202c"/>
+                    <!-- Clean Oval Eye Hole -->
+                    <ellipse cx="113" cy="114" rx="2" ry="5.5" fill="#f4efe6" transform="rotate(-28 113 114)"/>
+                </g>
+                
+                <!-- Signature Flowing Cursive Text: HSM -->
+                <text x="175" y="258" font-family="'Alex Brush', cursive" font-size="96" fill="#16202c" text-anchor="middle">HSM</text>
+                
+                <!-- Clean Modern Tagline exactly as in image -->
+                <text x="175" y="296" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="14" fill="#16202c" text-anchor="middle" letter-spacing="3.8">Makers of quality sewing thread</text>
+            </svg>
+        </div>
+
+        <h1 class="hero-title">The Art & Engineering of Premium Spun Polyester Thread</h1>
+        <p class="hero-subtitle">Delivering superior tensile strength, deep dye penetration, and dependable commercial consistency for modern textile manufacturing.</p>
+        
+        <div class="hero-actions">
+            <a href="#catalog" class="btn-primary">Explore Product Lineup</a>
+            <a href="#order" class="btn-secondary">Request Order</a>
+        </div>
+    </section>
+
+    <!-- SCENE 2: THE SPECTRUM OF COLOR & DYEING MASTERY -->
+    <section id="about" class="section-padding">
+        <div class="section-header reveal">
+            <span class="section-tag">Dye House Superiority</span>
+            <h2 class="section-title">Engineered for Industrial Performance</h2>
+            <p class="section-desc">We focus on what truly matters in commercial textile production: dependable batch-to-batch consistency, deep dye saturation, and high-tenacity spun polyester. By maintaining strict quality oversight across our vertical setup, we deliver sewing thread built to perform smoothly under high-speed manufacturing conditions.</p>
+        </div>
+
+        <div class="spectrum-grid">
+            <div class="spectrum-card card-ruby reveal">
+                <span class="card-number num-ruby">01</span>
+                <h3>Deep Saturation</h3>
+                <p>Utilizing high-grade dyes in pressure package dyeing machines that penetrate deep into the polyester core, ensuring vibrant, lasting color depth across your production lines.</p>
+            </div>
+
+            <div class="spectrum-card card-amber reveal" style="transition-delay: 0.15s;">
+                <span class="card-number num-amber">02</span>
+                <h3>Length Counter Precision</h3>
+                <p>Our Taiwanese and Chinese winding machinery features integrated length counters, ensuring reliable, standardized spooling and uniform package density across every cone.</p>
+            </div>
+
+            <div class="spectrum-card card-sapphire reveal" style="transition-delay: 0.3s;">
+                <span class="card-number num-sapphire">03</span>
+                <h3>High Tensile Integrity</h3>
+                <p>Manufactured from 100% Spun Polyester designed to resist abrasion, heat buildup, and thread skipped stitches during continuous commercial stitching runs.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCENE 3: THE PRODUCT CATALOG (100% SPUN POLYESTER LINEUP) -->
+    <section id="catalog" class="section-padding catalog-section">
+        <div class="section-header reveal">
+            <span class="section-tag">Our Product Catalog</span>
+            <h2 class="section-title">Finest Quality 100% Spun Polyester</h2>
+            <p class="section-desc">Explore our specialized range of thread counts engineered for diverse textile applications—from heavy-duty leather goods and denim seams to delicate commercial apparel.</p>
+        </div>
+
+        <div class="catalog-grid">
+            <!-- 20/4 -->
+            <div class="product-card reveal">
+                <span class="product-badge">Heavy Duty</span>
+                <div>
+                    <h3 class="count-title">20/4</h3>
+                    <p class="count-subtitle">100% Spun Polyester</p>
+                    <ul class="product-specs">
+                        <li>4-ply construction for maximum seam strength</li>
+                        <li>Ideal for heavy footwear, leather & upholstery</li>
+                        <li>High abrasion & chemical resistance</li>
+                    </ul>
+                </div>
+                <div class="product-card-footer">
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">Industrial Grade</span>
+                    <a href="#order" class="select-link" onclick="selectCount('20/4')">Order Count →</a>
+                </div>
+            </div>
+
+            <!-- 20/3 -->
+            <div class="product-card reveal" style="transition-delay: 0.1s;">
+                <span class="product-badge">High Stress</span>
+                <div>
+                    <h3 class="count-title">20/3</h3>
+                    <p class="count-subtitle">100% Spun Polyester</p>
+                    <ul class="product-specs">
+                        <li>3-ply heavy structural thread</li>
+                        <li>Perfect for denim jeans, workwear & canvas</li>
+                        <li>Excellent stitch formation and loop stability</li>
+                    </ul>
+                </div>
+                <div class="product-card-footer">
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">Industrial Grade</span>
+                    <a href="#order" class="select-link" onclick="selectCount('20/3')">Order Count →</a>
+                </div>
+            </div>
+
+            <!-- 20/2 -->
+            <div class="product-card reveal" style="transition-delay: 0.2s;">
+                <span class="product-badge">Robust Seaming</span>
+                <div>
+                    <h3 class="count-title">20/2</h3>
+                    <p class="count-subtitle">100% Spun Polyester</p>
+                    <ul class="product-specs">
+                        <li>2-ply thick garment stitching</li>
+                        <li>Widely used in outerwear, quilting & drapery</li>
+                        <li>Smooth silicone finish for needle heat reduction</li>
+                    </ul>
+                </div>
+                <div class="product-card-footer">
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">Apparel Grade</span>
+                    <a href="#order" class="select-link" onclick="selectCount('20/2')">Order Count →</a>
+                </div>
+            </div>
+
+            <!-- 50/3 -->
+            <div class="product-card reveal" style="transition-delay: 0.3s;">
+                <span class="product-badge">Medium Heavy</span>
+                <div>
+                    <h3 class="count-title">50/3</h3>
+                    <p class="count-subtitle">100% Spun Polyester</p>
+                    <ul class="product-specs">
+                        <li>3-ply balanced tensile construction</li>
+                        <li>Designed for trousers, protective wear & uniforms</li>
+                        <li>Consistent dye uptake across cones</li>
+                    </ul>
+                </div>
+                <div class="product-card-footer">
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">Apparel Grade</span>
+                    <a href="#order" class="select-link" onclick="selectCount('50/3')">Order Count →</a>
+                </div>
+            </div>
+
+            <!-- 50/2 -->
+            <div class="product-card reveal" style="transition-delay: 0.4s;">
+                <span class="product-badge">Versatile Standard</span>
+                <div>
+                    <h3 class="count-title">50/2</h3>
+                    <p class="count-subtitle">100% Spun Polyester</p>
+                    <ul class="product-specs">
+                        <li>The industry benchmark for general sewing</li>
+                        <li>Ideal for shirts, woven fabrics & knitwear</li>
+                        <li>Virtually eliminates thread skipped stitches</li>
+                    </ul>
+                </div>
+                <div class="product-card-footer">
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">Standard Grade</span>
+                    <a href="#order" class="select-link" onclick="selectCount('50/2')">Order Count →</a>
+                </div>
+            </div>
+
+            <!-- 40/2 -->
+            <div class="product-card reveal" style="transition-delay: 0.5s;">
+                <span class="product-badge">High Speed</span>
+                <div>
+                    <h3 class="count-title">40/2</h3>
+                    <p class="count-subtitle">100% Spun Polyester</p>
+                    <ul class="product-specs">
+                        <li>Optimized for commercial multi-head machines</li>
+                        <li>Superior performance on lightweight & delicate fabrics</li>
+                        <li>Low lint generation during continuous runs</li>
+                    </ul>
+                </div>
+                <div class="product-card-footer">
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">High Speed Grade</span>
+                    <a href="#order" class="select-link" onclick="selectCount('40/2')">Order Count →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCENE 4: VERTICAL SETUP & MANUFACTURING INFRASTRUCTURE -->
+    <section id="setup" class="section-padding">
+        <div class="machinery-container">
+            <div class="reveal">
+                <span class="section-tag">Manufacturing Infrastructure</span>
+                <h2 class="section-title">Our Complete Vertical Setup</h2>
+                <p class="section-desc">By maintaining an independent vertical setup, we exercise complete oversight over the winding, dyeing, and drying processes, ensuring every cone meets rigorous industrial standards.</p>
+                
+                <div class="machinery-list">
+                    <div class="machinery-box">
+                        <h4>⚙️ Precision Cone Machines</h4>
+                        <p>We operate imported **Taiwanese and Chinese cone winders** equipped with advanced length counters. This guarantees precise yarn package density, optimal cone formation, and uniform unwinding tension during high-speed sewing.</p>
+                    </div>
+
+                    <div class="machinery-box">
+                        <h4>🧪 Advanced Cone Dyeing & Dryers</h4>
+                        <p>Our dye house utilizes **different sizes of high-pressure Cone Dyeing machines** tailored for flexible lot sizes, paired with specialized industrial cone dryers that eliminate inner-cone moisture and lock in color fastness.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Animated Schematic Representation -->
+            <div class="schematic-display reveal" style="transition-delay: 0.2s;">
+                <div class="schematic-title">● Dyeing & Winding Simulation</div>
+                <div class="cones-animation">
+                    <div class="animated-cone cone-1"><div class="cone-thread-wrap"></div></div>
+                    <div class="animated-cone cone-2"><div class="cone-thread-wrap"></div></div>
+                    <div class="animated-cone cone-3"><div class="cone-thread-wrap"></div></div>
+                    <div class="animated-cone cone-4"><div class="cone-thread-wrap"></div></div>
+                </div>
+                <p style="font-size: 0.85rem; color: #9ca3af; margin-top: 1.5rem; letter-spacing: 1px;">Continuous Liquor Flow & Precision Length Winding</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCENE 5: OEKO-TEX CERTIFICATION & STRATEGIC LOCATION -->
+    <section id="certification" class="section-padding cert-location-section">
+        <div class="grid-2col">
+            <!-- Certification Box -->
+            <div class="cert-box reveal">
+                <div class="cert-badge">🌿</div>
+                <span class="section-tag" style="color: #047857;">Global Compliance</span>
+                <h3 class="box-title">Oeko-Tex® Standard 100 Certified</h3>
+                <p class="section-desc" style="margin-bottom: 0;">We are proud to be **Oeko-Tex Standard 100 certified**, adhering strictly to international textile safety standards. Every component of our dyed thread is rigorously tested and guaranteed free from harmful substances, ensuring safety for human contact and global apparel compliance.</p>
+            </div>
+
+            <!-- Location Box -->
+            <div class="location-box reveal" style="transition-delay: 0.2s;">
+                <div class="cert-badge" style="background: var(--vibrant-sapphire);">📍</div>
+                <span class="section-tag" style="color: var(--vibrant-sapphire);">Strategic Location</span>
+                <h3 class="box-title">Prime Industrial Positioning</h3>
+                <p class="section-desc" style="margin-bottom: 0;">Our manufacturing facility is situated in the industrial area, positioning us ideally for efficient nationwide logistics, rapid sampling turnarounds, and dependable commercial supply chain delivery.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCENE 6: THE EPILOGUE & DIRECT EMAIL ORDER SUITE -->
+    <footer id="order">
+        <div class="footer-grid">
+            <div class="contact-info reveal">
+                <span class="section-tag" style="color: #fbbf24;">Direct Order Suite</span>
+                <h2>Initiate Your Thread Order</h2>
+                <p>Partner with us for dependable 100% Spun Polyester thread. Submit your required counts and shade specifications below, and your query will be routed directly to our inbox.</p>
+                
+                <div class="contact-hotline">
+                    <span class="hotline-label">Direct Sales & Inquiry Hotline</span>
+                    <a href="tel:+923320034242" class="hotline-number">92-332-00-DHAGA (34242)</a>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <span class="hotline-label" style="display: block; margin-bottom: 0.5rem;">Official Correspondence Email</span>
+                    <a href="mailto:humayunbrothers@hotmail.com" style="color: #fff; font-size: 1.1rem; text-decoration: underline;">humayunbrothers@hotmail.com</a>
+                </div>
+            </div>
+
+            <!-- Interactive Order Form -> Routes to humayunbrothers@hotmail.com -->
+            <div class="order-form-card reveal" style="transition-delay: 0.2s;">
+                <h3>Request an Order / Quote</h3>
+                <p>Fill out the details below to generate a direct inquiry order to our Hotmail department.</p>
+                
+                <form id="threadOrderForm" onsubmit="sendMailto(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Your Name / Company</label>
+                            <input type="text" id="senderName" class="form-control" placeholder="e.g. Apex Textiles" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Contact Phone</label>
+                            <input type="text" id="senderPhone" class="form-control" placeholder="+92 ..." required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Thread Count</label>
+                            <select id="threadCount" class="form-control" required>
+                                <option value="" disabled selected>Select Count...</option>
+                                <option value="20/4 Spun Polyester">20/4 Spun Polyester</option>
+                                <option value="20/3 Spun Polyester">20/3 Spun Polyester</option>
+                                <option value="20/2 Spun Polyester">20/2 Spun Polyester</option>
+                                <option value="50/3 Spun Polyester">50/3 Spun Polyester</option>
+                                <option value="50/2 Spun Polyester">50/2 Spun Polyester</option>
+                                <option value="40/2 Spun Polyester">40/2 Spun Polyester</option>
+                                <option value="Multiple Counts / Custom">Multiple Counts / Custom</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Est. Quantity (Cones/Kgs)</label>
+                            <input type="text" id="orderQty" class="form-control" placeholder="e.g. 500 Cones">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Shade / Color Specifications & Notes</label>
+                        <textarea id="orderNotes" class="form-control" rows="3" placeholder="Specify shade requirements, sample requests, or delivery timelines..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Submit Order Inquiry to Hotmail</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="copyright-bar">
+            <div>&copy; 2026 HSM (HUMAYUN BROTHERS / HUMAYUN COMPANY). ALL RIGHTS RESERVED.</div>
+            <div>INDUSTRIAL AREA &bull; OEKO-TEX STANDARD 100 CERTIFIED</div>
+        </div>
+    </footer>
+
+    <!-- SCRIPT: ANIMATIONS, INTRO LOADER & DIRECT MAILTO INTEGRATION -->
+    <script>
+        // --- 1. INTRO LOADER DISMISSAL ---
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('intro-loader');
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+                loader.style.pointerEvents = 'none';
+            }, 2600);
+        });
+
+        // --- 2. SMOOTH SCROLL REVEAL OBSERVER ---
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealOptions = { threshold: 0.15, rootMargin: "0px 0px -40px 0px" };
+
+        const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add('active');
+                observer.unobserve(entry.target);
+            });
+        }, revealOptions);
+
+        revealElements.forEach(el => revealOnScroll.observe(el));
+
+        // --- 3. PRODUCT CATALOG COUNT SELECTOR ---
+        function selectCount(count) {
+            const selectBox = document.getElementById('threadCount');
+            for (let i = 0; i < selectBox.options.length; i++) {
+                if (selectBox.options[i].value.includes(count)) {
+                    selectBox.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+
+        // --- 4. DIRECT ORDER FORM MAILTO ROUTING ---
+        function sendMailto(e) {
+            e.preventDefault();
+            const name = document.getElementById('senderName').value;
+            const phone = document.getElementById('senderPhone').value;
+            const count = document.getElementById('threadCount').value;
+            const qty = document.getElementById('orderQty').value || "Not specified";
+            const notes = document.getElementById('orderNotes').value || "None";
+
+            const subject = encodeURIComponent(`Thread Order Inquiry: ${count} - ${name}`);
+            const body = encodeURIComponent(
+`NEW ORDER INQUIRY - HSM THREAD WEBSITE
+--------------------------------------------------
+Sender / Company: ${name}
+Contact Phone: ${phone}
+Selected Product: ${count}
+Estimated Quantity: ${qty}
+
+Additional Shade Specifications / Notes:
+${notes}
+--------------------------------------------------
+Sent via HSM Official Online Order Suite.`
+            );
+
+            // Opens default mail client addressed directly to your Hotmail
+            window.location.href = `mailto:humayunbrothers@hotmail.com?subject=${subject}&body=${body}`;
+        }
+
+        // --- 5. CINEMATIC BACKGROUND CANVAS (FLOATING SPECTRUM THREADS) ---
+        const canvas = document.getElementById('threadCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let threads = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        class ColorfulThread {
+            constructor() { this.reset(); }
+
+            reset() {
+                this.y = Math.random() * height;
+                this.length = width * (0.6 + Math.random() * 0.6);
+                this.speed = 0.4 + Math.random() * 1.2;
+                this.amplitude = 25 + Math.random() * 50;
+                this.frequency = 0.002 + Math.random() * 0.003;
+                this.offset = Math.random() * Math.PI * 2;
+                this.opacity = 0.12 + Math.random() * 0.22;
+                
+                const colors = ['#e11d48', '#b45309', '#1d4ed8', '#047857', '#c84b31'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.thickness = 1.2 + Math.random() * 2;
+            }
+
+            update() { this.offset += 0.012; }
+
+            draw() {
+                ctx.beginPath();
+                ctx.lineWidth = this.thickness;
+                ctx.strokeStyle = this.color;
+                ctx.globalAlpha = this.opacity;
+
+                for (let x = 0; x < width; x += 25) {
+                    const currentY = this.y + Math.sin(x * this.frequency + this.offset) * this.amplitude;
+                    if (x === 0) ctx.moveTo(x, currentY);
+                    else ctx.lineTo(x, currentY);
+                }
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        for (let i = 0; i < 14; i++) {
+            threads.push(new ColorfulThread());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            threads.forEach(t => { t.update(); t.draw(); });
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
